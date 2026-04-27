@@ -7,7 +7,6 @@ import {
 import { db } from '../db/db.js';
 import { matches } from '../db/schema.js';
 import { getMatchStatus } from '../utils/match-status.js';
-import { error } from 'node:console';
 
 export const matchesRouter = Router();
 
@@ -33,26 +32,27 @@ matchesRouter.get('/', async (req, res) => {
       .limit(limit);
     res.status(200).json({ message: 'Matches List', data });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({
       error: 'Failed to fetch matches',
-      details: JSON.stringify(error),
+      details: error instanceof Error ? error.message : String(error),
     });
   }
 });
 
 matchesRouter.post('/', async (req, res) => {
   const parsed = createMatchSchema.safeParse(req.body);
-  const {
-    data: { startTime, endTime, homeScore, awayScore },
-  } = parsed;
 
   if (!parsed.success) {
     return res.status(400).json({
       error: 'Invalid payload',
-      details: JSON.stringify(parsed.error),
+      details: parsed.error.issues,
     });
   }
+
+  const {
+    data: { startTime, endTime, homeScore, awayScore },
+  } = parsed;
 
   try {
     const [event] = await db
@@ -74,7 +74,7 @@ matchesRouter.post('/', async (req, res) => {
     console.log(error);
     return res.status(500).json({
       error: 'Failed to create match',
-      details: JSON.stringify(parsed.error),
+      details: error instanceof Error ? error.message : String(error),
     });
   }
 });

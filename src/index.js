@@ -24,7 +24,7 @@ const { broadcastMatchCreated } = attachWebSocketServer(server);
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
 
 // Start the server
-server.listen(PORT, () => {
+server.listen(PORT, HOST, () => {
   const baseUrl =
     HOST === '0.0.0.0' ? `http://localhost:${PORT}` : `http://${HOST}:${PORT}`;
 

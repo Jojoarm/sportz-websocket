@@ -14,7 +14,7 @@ function broadcast(wss, payload) {
   }
 }
 
-//attach websoket server to existing http server
+// attach websocket server to existing http server
 export function attachWebSocketServer(server) {
   const wss = new WebSocketServer({
     server,
